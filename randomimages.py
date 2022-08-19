@@ -1,4 +1,3 @@
-from email.mime import image
 import requests
 import time
 import win32api

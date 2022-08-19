@@ -1,4 +1,3 @@
-import json
 import requests
 import time
 import win32api
@@ -9,7 +8,7 @@ import random             # 用于随机选择图片
 def url():
     url_bing='https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN'
     a=requests.get(url=url_bing)
-    dict1=json.loads(a.text)
+    dict1=eval(a.text,{'true':'True'})
     dict2=dict1.get('images')
     dict3=dict2[0]
     dict4=dict3.get('url')
