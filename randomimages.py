@@ -4,7 +4,6 @@ import win32api
 import win32con
 import win32gui
 import os                 # 用于文件夹操作
-import random             # 用于随机选择图片
 images_url = 'https://bing.icodeq.com'
 
 
