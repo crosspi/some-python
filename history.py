@@ -1,5 +1,5 @@
 import requests
-from vscodedebugvisualizer import globalVisualizationFactory
+
 url = "https://api.ahfi.cn/api/lsjt?format=json"
 
 payload = {}
@@ -9,10 +9,10 @@ headers = {
     'Accept-Encoding': 'gzip, deflate',
     'Connection': 'keep-alive'
 }
-globalVisualizationFactory.addVisualizer(headers)
 response = requests.request("GET", url, headers=headers, data=payload)
 
-history = response.text
+text = response.text
+history = text
 history = eval(history)
 print('今天是:%s' % history.get('day'))
 print('历史上的今天发生了:')

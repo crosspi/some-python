@@ -1,7 +1,8 @@
-import requests
-import time
-import pandas
 import os
+import time
+
+import pandas
+import requests
 
 
 class F():
@@ -23,7 +24,7 @@ class F():
     def rename(self, before_name):
         ti = time.gmtime()
         ti = time.strftime('%Y-%m-%d %H%M%S')
-        after_name = 'hotsearch'+ti+'.xlsx'
+        after_name = 'hotsearch' + ti + '.xlsx'
         os.rename(os.path.join(self.find_path, before_name),
                   os.path.join(self.find_path, after_name))
         return after_name
@@ -73,6 +74,6 @@ res = list(zip(re1, re2, re3, re4, re5, re7, re8))
 columns = ['微博', '百度', '知乎', '头条', '抖音', '神马', '360']
 df = pandas.DataFrame(data=res, columns=columns)
 df.index += 1
-xlsx_path = 'C:\my\python\some-python'+'\\'+xlsx_name
+xlsx_path = 'C:\my\python\some-python' + '\\' + xlsx_name
 df.to_excel(xlsx_path)
 print('完成')
