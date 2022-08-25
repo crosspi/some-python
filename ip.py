@@ -1,7 +1,9 @@
 import requests
+
+# 'https://api.ahfi.cn/api/p?type=' is not do
 ip_url = requests.get(url='https://api.ahfi.cn/api/bip')
 ip = ip_url.text
-ip_inquire = 'https://api.ahfi.cn/api/ip?type='+ip
+ip_inquire = 'https://api.ahfi.cn/api/ip?type=' + ip
 ip_xx = requests.get(url=ip_inquire)
 dict1 = eval(ip_xx.text, {'true': 'True'})
 dict2 = dict1.get('site')
