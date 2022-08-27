@@ -24,17 +24,17 @@ class F():
     def rename(self, before_name):
         ti = time.gmtime()
         ti = time.strftime('%Y-%m-%d %H%M%S')
-        after_name = 'hotsearch' + ti + '.xlsx'
+        after_name = 'hotsearch' + ti + '.csv'
         os.rename(os.path.join(self.find_path, before_name),
                   os.path.join(self.find_path, after_name))
         return after_name
 
 
 if __name__ == '__main__':
-    a = F(find_path='C:\my\python\some-python',
-          find_types=['.xlsx'])
+    a = F(find_path=r'C:\Users\86138\PycharmProjects\pythonProject2\some-python',
+          find_types=['.csv'])
     F.find(a)
-    xlsx_name = F.rename(a, a.list_types[0])
+    csv_name = F.rename(a, a.list_types[0])
 
 
 def hotsearch_get(url):
@@ -74,6 +74,6 @@ res = list(zip(re1, re2, re3, re4, re5, re7, re8))
 columns = ['微博', '百度', '知乎', '头条', '抖音', '神马', '360']
 df = pandas.DataFrame(data=res, columns=columns)
 df.index += 1
-xlsx_path = 'C:\my\python\some-python' + '\\' + xlsx_name
-df.to_excel(xlsx_path)
+csv_path = 'C:\\Users\\86138\\PycharmProjects\\pythonProject2\\some-python' + '\\' + csv_name
+df.to_csv(csv_path)
 print('完成')
