@@ -1,14 +1,14 @@
 import os
 
 
-class F():
+class F:
     def __init__(self, find_path, find_types):
         self.find_types = find_types
         self.list_types = []
         self.find_path = find_path
 
     def find(self):
-        if self.find_types == []:
+        if not self.find_types:
             self.find_types = input('请输入搜索文件类型,用逗号隔开:').split(',')
         self.list_types = []
         find_dir = os.listdir(path=self.find_path)

@@ -1,12 +1,12 @@
-import zipfile
 import itertools
+import zipfile
 from concurrent.futures import ThreadPoolExecutor
 
 
 def extract(file, password):
     if not flag:
         return
-    file.extractall(path='.', pwd=''.join(password).encode('utf-8'))
+    file.extractall(path='..', pwd=''.join(password).encode('utf-8'))
 
 
 def result(f):

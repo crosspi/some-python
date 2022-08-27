@@ -1,5 +1,3 @@
-import pyautogui
-import PIL  # must PIL fact is pillow
 # a, b = pyautogui.size()
 # pyautogui.PAUSE = 1 设置 pyautogui.PAUSE = 1 之后，每个 PyAutoGUI 函数调用 在执行动作之后，都会等待一秒
 # sizex,sizey=pyautogui.size() # 保存屏幕尺寸
