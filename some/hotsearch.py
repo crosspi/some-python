@@ -38,20 +38,32 @@ if __name__ == '__main__':
 
 
 def hotsearch_get(url):
-    for a in (0, 20):
-        re = requests.get(url=url).text
-        re = eval(re)
-        code = int(re.get('code'))
-        if code == 1502:
+    re = requests.get(url=url).text
+    re = eval(re)
+    code = int(re.get('code'))
+    if code == 200:
+        re = re.get('data')
+        re = re.get('result')
+        re = list(re)
+        print(url + "已成功")
+        return re
+    else:
+        print("失败请重试")
+        a = input("是否重试:(y/n)")
+        if a == "y":
             time.sleep(6)
-            continue
-        if code == 200:
+            re = requests.get(url=url).text
+            re = eval(re)
             re = re.get('data')
             re = re.get('result')
             re = list(re)
+            print(url + "已成功")
             return re
-
-            break
+        if a == "n":
+            re = []
+            for i in range(1, 21):
+                re.append(i)
+            return re
 
 
 re1 = hotsearch_get(
@@ -60,11 +72,12 @@ re2 = hotsearch_get(
     'http://s.api.enetapi.com/api/BaiduHotSearch?hot=rt&qty=20 ')
 re3 = hotsearch_get(
     'http://s.api.enetapi.com/api/ZhihuHotSearch?hot=rt&qty=20 ')
-time.sleep(6)
+time.sleep(8)
 re4 = hotsearch_get(
     'http://s.api.enetapi.com/api/ToutiaoHotsearch?hot=rt&qty=20 ')
 re5 = hotsearch_get(
     'http://s.api.enetapi.com/api/TikTokHotSearch?hot=rt&qty=20 ')
+time.sleep(6)
 re7 = hotsearch_get(
     'http://s.api.enetapi.com/api/GodhorseHotSearch?hot=rt&qty=20 ')
 time.sleep(6)
