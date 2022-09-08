@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#my
+/some/hotsearch2022-09-02 012935.csv
