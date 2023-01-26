@@ -31,62 +31,8 @@ class F():
 
 
 if __name__ == '__main__':
-    a = F(find_path=r'C:\Users\86138\PycharmProjects\pythonProject2\some-python\some',
+    the_dir = os.getcwd()
+    a = F(find_path=the_dir,
           find_types=['.csv'])
     F.find(a)
     csv_name = F.rename(a, a.list_types[0])
-
-
-def hotsearch_get(url):
-    re = requests.get(url=url).text
-    re = eval(re)
-    code = int(re.get('code'))
-    if code == 200:
-        re = re.get('data')
-        re = re.get('result')
-        re = list(re)
-        print(url + "已成功")
-        return re
-    else:
-        print("失败请重试")
-        a = input("是否重试:(y/n)")
-        if a == "y":
-            time.sleep(6)
-            re = requests.get(url=url).text
-            re = eval(re)
-            re = re.get('data')
-            re = re.get('result')
-            re = list(re)
-            print(url + "已成功")
-            return re
-        if a == "n":
-            re = []
-            for i in range(1, 21):
-                re.append(i)
-            return re
-
-
-re1 = hotsearch_get(
-    'http://s.api.enetapi.com/api/WeiboHotSearch?hot=rt&qty=20 ')
-re2 = hotsearch_get(
-    'http://s.api.enetapi.com/api/BaiduHotSearch?hot=rt&qty=20 ')
-re3 = hotsearch_get(
-    'http://s.api.enetapi.com/api/ZhihuHotSearch?hot=rt&qty=20 ')
-time.sleep(8)
-re4 = hotsearch_get(
-    'http://s.api.enetapi.com/api/ToutiaoHotsearch?hot=rt&qty=20 ')
-re5 = hotsearch_get(
-    'http://s.api.enetapi.com/api/TikTokHotSearch?hot=rt&qty=20 ')
-time.sleep(6)
-re7 = hotsearch_get(
-    'http://s.api.enetapi.com/api/GodhorseHotSearch?hot=rt&qty=20 ')
-time.sleep(6)
-re8 = hotsearch_get(
-    'http://s.api.enetapi.com/api/360HotSearch?hot=rt&qty=20 ')
-res = list(zip(re1, re2, re3, re4, re5, re7, re8))
-columns = ['微博', '百度', '知乎', '头条', '抖音', '神马', '360']
-df = pandas.DataFrame(data=res, columns=columns)
-df.index += 1
-csv_path = 'C:\\Users\\86138\\PycharmProjects\\pythonProject2\\some-python\\some' + '\\' + csv_name
-df.to_csv(csv_path)
-print('完成')
