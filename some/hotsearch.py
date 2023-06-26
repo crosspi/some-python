@@ -1,9 +1,6 @@
 import os
 import time
 
-import pandas
-import requests
-
 
 class F():
     def __init__(self, find_path, find_types):
