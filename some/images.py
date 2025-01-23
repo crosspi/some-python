@@ -1,77 +1,120 @@
+"""
+图片处理模块
+包含必应壁纸下载、随机壁纸下载、壁纸设置等功能
+"""
+
+import os
 import time
 import requests
 import ctypes
-import os
+import urllib3
+
+# 禁用SSL警告
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
-def find(find_path):
-    for i in ["bing", "random"]:
-        list_time = []
-        for find_file in os.listdir(find_path):
-            if i in find_file:
-                ctime = os.path.getctime(os.path.join(find_path, find_file))
-                list_time.append(ctime)
-
-        list_time.sort(reverse=True)
-        delete_time = list_time[0:5]
-        for find_file in os.listdir(find_path):
-            if i in find_file:
-                if os.path.getctime(os.path.join(find_path, find_file)) not in delete_time:
-                    os.remove(os.path.join(find_path, find_file))
+def get_images_dir():
+    """获取图片存储目录，如果不存在则创建"""
+    images_dir = os.path.join(os.path.expanduser('~'), 'Desktop', 'images')
+    os.makedirs(images_dir, exist_ok=True)
+    return images_dir
 
 
-def find_dir():
-    dir_path = os.path.expanduser('~') + r"\Desktop\images"
-    if os.path.exists(dir_path):
-        pass
+def download_image(url, prefix='bing', max_retries=3):
+    """
+    下载图片并保存到指定目录
+    :param url: 图片URL
+    :param prefix: 文件名前缀
+    :param max_retries: 最大重试次数
+    :return: 保存的文件名
+    """
+    images_dir = get_images_dir()
+    timestamp = time.strftime(
+        '%Y-%m-%d-%H%M%S' if prefix == 'random' else '%Y-%m-%d')
+    # 在文件名中加入分辨率信息
+    resolution = '4k' if 'uhd' in url else '1080p'
+    filename = f"{prefix}_{resolution}_{timestamp}.jpg"
+    filepath = os.path.join(images_dir, filename)
+
+    for attempt in range(max_retries):
+        try:
+            # 禁用SSL验证并设置超时
+            response = requests.get(url, verify=False, timeout=10)
+            # 检查响应内容是否为图片
+            if response.headers.get('Content-Type', '').startswith('image'):
+                with open(filepath, 'wb') as f:
+                    f.write(response.content)
+                return filename
+        except requests.exceptions.RequestException as e:
+            if attempt == max_retries - 1:
+                raise Exception(f"下载图片失败: {str(e)}")
+            time.sleep(1)  # 等待1秒后重试
+
+    raise Exception("无法下载图片：达到最大重试次数")
+
+
+def set_wallpaper(image_path):
+    """设置桌面壁纸"""
+    ctypes.windll.user32.SystemParametersInfoW(20, 0, image_path, 0)
+
+
+def clean_old_images(prefix, keep_count=5):
+    """
+    清理旧图片，保留最新的指定数量
+    :param prefix: 图片前缀（'bing'或'random'）
+    :param keep_count: 保留的最新图片数量
+    """
+    images_dir = get_images_dir()
+    images = [f for f in os.listdir(images_dir) if f.startswith(prefix)]
+    images.sort(key=lambda f: os.path.getctime(
+        os.path.join(images_dir, f)), reverse=True)
+
+    for old_image in images[keep_count:]:
+        os.remove(os.path.join(images_dir, old_image))
+
+
+def get_bing_image_url(resolution='1080p'):
+    """
+    获取必应每日图片URL
+    :param resolution: 图片分辨率，可选'1080p'或'4k'
+    :return: 图片URL
+    """
+    if resolution == '1080p':
+        return 'https://bing.img.run/1920x1080.php'
     else:
-        os.makedirs(dir_path)
-    return dir_path
+        return 'https://bing.img.run/uhd.php'
 
 
-path = find_dir()
+def change_bing(resolution='1080p'):
+    """
+    设置必应每日壁纸
+    :param resolution: 图片分辨率，可选'1080p'或'4k'
+    """
+    image_url = get_bing_image_url(resolution)
+    filename = download_image(image_url, 'bing')
+    set_wallpaper(os.path.join(get_images_dir(), filename))
+    clean_old_images('bing')
 
 
-def url():
-    url_bing = 'https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=zh-CN'
-    a = requests.get(url=url_bing)
-    dict1 = eval(a.text, {'true': 'True'})
-    dict2 = dict1.get('images')
-    dict3 = dict2[0]
-    dict4 = dict3.get('url')
-    images_url = 'http://cn.bing.com' + dict4
-    return images_url
-
-
-def wt(url_images):
-    ti = time.gmtime()
-    if url_images == 'https://bing.icodeq.com':
-        ti = time.strftime('%Y-%m-%d-%H%M%S')
-        ti = 'randomimages' + ti
+def get_random_image_url(resolution='1080p'):
+    """
+    获取随机壁纸URL
+    :param resolution: 图片分辨率，可选'1080p'或'4k'
+    :return: 图片URL
+    """
+    if resolution == '1080p':
+        return 'https://bing.img.run/rand.php'
     else:
-        ti = time.strftime('%Y-%m-%d')
-        ti = 'bingimages' + ti
-    data = requests.get(url=url_images)
-    fd4 = open(path + r'/%s.jpg' % ti, 'wb')
-    fd4.write(data.content)
-    fd4.close()
-    return ti + '.jpg'
+        return 'https://bing.img.run/rand_uhd.php'
 
 
-def change_bing():  # 存放图片文件的文件夹路径
-    # img_lst = os.listdir(path=path)  # 获取文件夹下的所有图片，并存放在列表
-    # file = random.choice(img_lst)    # 随机选择图片
-    images_url = url()
-    file = wt(url_images=images_url)
-    img_path = os.path.join(path, file)
-    ctypes.windll.user32.SystemParametersInfoW(20, 0, img_path, 0)
-    find(path)
+def change_random(resolution='1080p'):
+    """
+    设置随机壁纸
+    :param resolution: 图片分辨率，可选'1080p'或'4k'
+    """
+    image_url = get_random_image_url(resolution)
 
-
-def change_random():  # 存放图片文件的文件夹路径
-    # img_lst = os.listdir(path=path)  # 获取文件夹下的所有图片，并存放在列表
-    # file = random.choice(img_lst)    # 随机选择图片
-    file = wt(url_images='https://bing.icodeq.com')
-    img_path = os.path.join(path, file)
-    ctypes.windll.user32.SystemParametersInfoW(20, 0, img_path, 0)
-    find(path)
+    filename = download_image(image_url, 'random')
+    set_wallpaper(os.path.join(get_images_dir(), filename))
+    clean_old_images('random')
